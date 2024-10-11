@@ -6,8 +6,6 @@ services:
   nginx:
     restart: always
     image: nginx:latest
-    expose:
-      - 8080
     ports:
       - 80:8080
     volumes:
@@ -24,8 +22,6 @@ services:
       dockerfile: docker/python/Dockerfile
     volumes:
       - ./siteman:/srv/www/siteman
-    expose:
-      - 8000
     ports:
       - 8000:8000
     command: "gunicorn -c gunicorn.py siteman.wsgi"
