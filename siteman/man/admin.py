@@ -2,14 +2,37 @@ from django.contrib import admin, messages
 from .models import Man, Category
 
 
+class MarriedFilter(admin.SimpleListFilter):
+    title = 'Статус мужчин'
+    parameter_name = 'status'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('married', 'Женат'),
+            ('single', 'Не женат')
+        ]
+
+    def queryset(self, request, queryset):
+        if self.value() == 'married':
+            return queryset.filter(wife__isnull=False)
+        return queryset
+
+
 @admin.register(Man)
 class ManAdmin(admin.ModelAdmin):
+    fields = ('title', 'slug', 'cat', 'content', 'wife', 'tags')  # Поля для редактирования
+    # exclude = ('tags', 'is_published')  # Исключаемые из редактирования поля
+    # readonly_fields = ('slug', )
+    prepopulated_fields = {'slug': ('title', )}
+    filter_horizontal = ('tags', )
     list_display = ('id', 'title', 'time_create', 'is_published', 'cat', 'brief_info')
     list_display_links = ('title',)
     ordering = ('time_create',)
     list_editable = ('is_published',)
     list_per_page = 10
     actions = ('set_published', 'set_draft')
+    search_fields = ('title__startswith', 'cat__name')
+    list_filter = (MarriedFilter, 'cat__name', 'is_published')
 
     @admin.display(description='Краткое описание', ordering='content')
     def brief_info(self, man: Man):
