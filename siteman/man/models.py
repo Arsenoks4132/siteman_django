@@ -1,5 +1,7 @@
 from django.db import models
 from django.urls import reverse
+
+
 # from django.utils.text import slugify
 
 
@@ -12,17 +14,20 @@ class PublishedManager(models.Manager):
 
 
 class Man(models.Model):
-    class Status(models.TextChoices):
-        DRAFT = 'DRAFT', 'Черновик'
-        PUBLISHED = 'PUBLISHED', 'Опубликовано'
+    class Status(models.IntegerChoices):
+        DRAFT = 0, 'Черновик'
+        PUBLISHED = 1, 'Опубликовано'
 
     title = models.CharField(max_length=255, verbose_name='Заголовок')
     slug = models.SlugField(max_length=255, unique=True, db_index=True, verbose_name='Slug')
     content = models.TextField(blank=True, verbose_name='Контент')
     time_create = models.DateTimeField(auto_now_add=True, verbose_name='Время создания')
     time_update = models.DateTimeField(auto_now=True, verbose_name='Время обновления')
-    is_published = models.CharField(max_length=20, choices=Status.choices, default=Status.DRAFT,
-                                    verbose_name='Опубликовано')
+    is_published = models.BooleanField(
+        choices=tuple(map(lambda x: (bool(x[0]), x[1]), Status.choices)),
+        default=Status.DRAFT,
+        verbose_name='Опубликовано'
+    )
     cat = models.ForeignKey('Category', on_delete=models.PROTECT, related_name='posts', verbose_name='Категория')
     tags = models.ManyToManyField('TagPost', blank=True, related_name='tags')
     wife = models.OneToOneField('Wife', on_delete=models.SET_NULL, null=True, blank=True, related_name='mun')
