@@ -34,9 +34,13 @@ def categories_by_slug(request, cat_slug):
 
 def month(request, mn):
     if not (1 <= mn <= 12):
-        ur = reverse('cats_slug', args=(f'month_{mn}',))
-        return redirect(ur)
+        url = reverse('cats_slug', args=(f'month_{mn}',))
+        return redirect(url)
     return HttpResponse(f"<h2>Статья за месяц</h2><p>Месяц: {mn}</p>")
+
+
+def archive(request, year):
+    return HttpResponse(f'<h3>Архив за {year} год</h3>')
 
 
 def page_not_found(request, exception):

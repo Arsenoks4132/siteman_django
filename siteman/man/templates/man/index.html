@@ -8,7 +8,7 @@
             <p class="first">Категория: {{ p.cat.name }}</p>
             <p class="last">Дата: {{ p.time_update|date:'d-m-Y H:i:s' }}</p>
         </div>
-        <h2>{{p.title}}</h2>
+        <h2>{{ p.title }}</h2>
         {% autoescape off %}
         {{ p.content|linebreaks|truncatewords:30 }}
         {% endautoescape %}
