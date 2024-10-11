@@ -1,5 +1,8 @@
+from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect, reverse, get_object_or_404, get_list_or_404
+
+from .forms import AddPostForm
 from .models import Man, Category, TagPost
 
 menu = [
@@ -20,7 +23,12 @@ def index(request):
 
 
 def about(request):
-    data = {'title': 'О нашем сайте', 'text': 'Что-то о нашем чудесном сайте', 'menu': menu}
+    data = {
+        'title': 'О нашем сайте',
+        'menu': menu,
+        'text': 'Что-то о нашем чудесном сайте'
+
+    }
     return render(request, 'man/about.html', data)
 
 
@@ -58,8 +66,20 @@ def show_post(request, post_slug):
     return render(request, template_name='man/post.html', context=data)
 
 
-def add_page(request):
-    return HttpResponse('Новая страничка, но пока нельзя добавить её, силы недостаточно в тебе')
+def add_page(request: WSGIRequest):
+    if request.method == 'POST':
+        form = AddPostForm(request.POST)
+        if form.is_valid():
+            print(form.cleaned_data)
+    else:
+        form = AddPostForm()
+
+    data = {
+        'title': "Добавление статьи",
+        'menu': menu,
+        'form': form
+    }
+    return render(request, template_name='man/add_page.html', context=data)
 
 
 def contact(request):
