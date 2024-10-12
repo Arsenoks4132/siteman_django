@@ -2,8 +2,8 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect, reverse, get_object_or_404, get_list_or_404
 
-from .forms import AddPostForm
-from .models import Man, Category, TagPost
+from .forms import AddPostForm, UploadFileForm
+from .models import Man, Category, TagPost, UploadFiles
 
 menu = [
     {'title': 'О сайте', 'url_name': 'about'},
@@ -22,14 +22,28 @@ def index(request):
     return render(request, 'man/index.html', context=data)
 
 
-def about(request):
+def handle_uploaded_file(f):
+    with open(f"uploads/{f.name}", "wb+") as destination:
+        for chunk in f.chunks():
+            destination.write(chunk)
+
+
+def about(request: WSGIRequest):
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            # handle_uploaded_file(form.cleaned_data['file'])
+            fp = UploadFiles(file=form.cleaned_data['file'])
+            fp.save()
+    else:
+        form = UploadFileForm()
+
     data = {
         'title': 'О нашем сайте',
         'menu': menu,
-        'text': 'Что-то о нашем чудесном сайте'
-
+        'form': form,
     }
-    return render(request, 'man/about.html', data)
+    return render(request, template_name='man/about.html', context=data)
 
 
 def categories(request, cat_id):
@@ -68,15 +82,18 @@ def show_post(request, post_slug):
 
 def add_page(request: WSGIRequest):
     if request.method == 'POST':
-        form = AddPostForm(request.POST)
+        form = AddPostForm(request.POST, request.FILES)
         if form.is_valid():
             # print(form.cleaned_data)
-            try:
-                Man.objects.create(**form.cleaned_data)
-                uri = reverse('home')
-                return redirect(uri)
-            except:
-                form.add_error(None, 'Ошибка добавления поста')
+            # try:
+            #     Man.objects.create(**form.cleaned_data)
+            #     uri = reverse('home')
+            #     return redirect(uri)
+            # except:
+            #     form.add_error(None, 'Ошибка добавления поста')
+            form.save()
+            uri = reverse('home')
+            return redirect(uri)
     else:
         form = AddPostForm()
 
