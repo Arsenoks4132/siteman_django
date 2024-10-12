@@ -14,6 +14,11 @@ class PublishedManager(models.Manager):
         return super().get_queryset().filter(is_published=Man.Status.PUBLISHED)
 
 
+class PublishedManagerCats(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(posts__is_published=Man.Status.PUBLISHED)
+
+
 class Man(models.Model):
     class Status(models.IntegerChoices):
         DRAFT = 0, 'Черновик'
@@ -45,7 +50,7 @@ class Man(models.Model):
         verbose_name='Опубликовано'
     )
     cat = models.ForeignKey('Category', on_delete=models.PROTECT, related_name='posts', verbose_name='Категория')
-    tags = models.ManyToManyField('TagPost', blank=True, related_name='tags', verbose_name='Теги')
+    tags = models.ManyToManyField('TagPost', blank=True, related_name='posts', verbose_name='Теги')
     wife = models.OneToOneField(
         'Wife',
         on_delete=models.SET_NULL,
@@ -76,6 +81,9 @@ class Man(models.Model):
 class Category(models.Model):
     name = models.CharField(max_length=100, db_index=True, verbose_name='Название')
     slug = models.SlugField(max_length=255, unique=True, db_index=True)
+
+    objects = models.Manager()
+    published = PublishedManagerCats()
 
     class Meta:
         verbose_name = 'Категория'

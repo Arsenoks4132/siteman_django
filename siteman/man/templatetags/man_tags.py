@@ -8,11 +8,11 @@ register = template.Library()
 
 @register.inclusion_tag('man/list_categories.html')
 def show_categories(cat_selected=0):
-    cats = Category.objects.annotate(total=Count('posts')).filter(total__gt=0).order_by('name')
+    cats = Category.published.annotate(total=Count('posts')).filter(total__gt=0).order_by('name')
     return {'cats': cats, 'cat_selected': cat_selected}
 
 
 @register.inclusion_tag('man/list_tags.html')
 def show_all_tags():
-    tags = TagPost.objects.annotate(total=Count('tags'), ln=Length('tag')).filter(total__gt=0).order_by('ln')
+    tags = TagPost.objects.annotate(total=Count('posts'), ln=Length('tag')).filter(total__gt=0).order_by('ln')
     return {'tags': tags}

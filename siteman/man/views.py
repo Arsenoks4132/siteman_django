@@ -2,7 +2,7 @@ from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect, reverse, get_object_or_404, get_list_or_404
 from django.views import View
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, ListView
 
 from .forms import AddPostForm, UploadFileForm
 from .models import Man, Category, TagPost, UploadFiles
@@ -15,25 +15,30 @@ menu = [
 ]
 
 
-def index(request):
-    posts = Man.published.all().select_related('cat')
-    data = {
-        'title': 'Главная страница',
-        'menu': menu,
-        'posts': posts,
-        'cat_selected': 0
-    }
-    return render(request, 'man/index.html', context=data)
+# def index(request):
+#     posts = Man.published.all().select_related('cat')
+#     data = {
+#         'title': 'Главная страница',
+#         'menu': menu,
+#         'posts': posts,
+#         'cat_selected': 0
+#     }
+#     return render(request, 'man/index.html', context=data)
 
 
-class ManHome(TemplateView):
+class ManHome(ListView):
+    # model = Man
     template_name = 'man/index.html'
+    context_object_name = 'posts'
+
     extra_context = {
         'title': 'Главная страница',
         'menu': menu,
-        'posts': Man.published.all().select_related('cat'),
         'cat_selected': 0
     }
+
+    def get_queryset(self):
+        return Man.published.all().select_related('cat')
 
     # def get_context_data(self, **kwargs):
     #     context = super().get_context_data(**kwargs)
@@ -42,6 +47,7 @@ class ManHome(TemplateView):
     #     context['posts'] = Man.published.all().select_related('cat')
     #     context['cat_selected'] = int(self.request.GET.get('cat_id', 0))
     #     return context
+
 
 # def handle_uploaded_file(f):
 
@@ -103,29 +109,29 @@ def show_post(request, post_slug):
     return render(request, template_name='man/post.html', context=data)
 
 
-def add_page(request: WSGIRequest):
-    if request.method == 'POST':
-        form = AddPostForm(request.POST, request.FILES)
-        if form.is_valid():
-            # print(form.cleaned_data)
-            # try:
-            #     Man.objects.create(**form.cleaned_data)
-            #     uri = reverse('home')
-            #     return redirect(uri)
-            # except:
-            #     form.add_error(None, 'Ошибка добавления поста')
-            form.save()
-            uri = reverse('home')
-            return redirect(uri)
-    else:
-        form = AddPostForm()
-
-    data = {
-        'title': "Добавление статьи",
-        'menu': menu,
-        'form': form
-    }
-    return render(request, template_name='man/add_page.html', context=data)
+# def add_page(request: WSGIRequest):
+#     if request.method == 'POST':
+#         form = AddPostForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             # print(form.cleaned_data)
+#             # try:
+#             #     Man.objects.create(**form.cleaned_data)
+#             #     uri = reverse('home')
+#             #     return redirect(uri)
+#             # except:
+#             #     form.add_error(None, 'Ошибка добавления поста')
+#             form.save()
+#             uri = reverse('home')
+#             return redirect(uri)
+#     else:
+#         form = AddPostForm()
+#
+#     data = {
+#         'title': "Добавление статьи",
+#         'menu': menu,
+#         'form': form
+#     }
+#     return render(request, template_name='man/add_page.html', context=data)
 
 
 class AddPage(View):
@@ -160,27 +166,61 @@ def log_in(request):
     return HttpResponse('БД пока нету, терпите')
 
 
-def show_category(request, cat_slug):
-    category = get_object_or_404(Category, slug=cat_slug)
-    posts = Man.published.filter(cat=category).select_related('cat')
-    data = {'title': f'Рубрика: {category.name}',
-            'menu': menu,
-            'posts': posts,
-            'cat_selected': category.pk,
-            }
+# def show_category(request, cat_slug):
+#     category = get_object_or_404(Category, slug=cat_slug)
+#     posts = Man.published.filter(cat=category).select_related('cat')
+#     data = {'title': f'Рубрика: {category.name}',
+#             'menu': menu,
+#             'posts': posts,
+#             'cat_selected': category.pk,
+#             }
+#
+#     return render(request, 'man/index.html', context=data)
 
-    return render(request, 'man/index.html', context=data)
+
+class ManCategory(ListView):
+    template_name = 'man/index.html'
+    context_object_name = 'posts'
+    allow_empty = False
+
+    def get_queryset(self):
+        return Man.published.filter(cat__slug=self.kwargs['cat_slug']).select_related('cat')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cat = context['posts'][0].cat
+        context['title'] = f'Категория - {cat.name}'
+        context['menu'] = menu
+        context['cat_selected'] = cat.pk
+        return context
 
 
-def show_tag_post_list(request, tag_slug):
-    tag = get_object_or_404(TagPost, slug=tag_slug)
-    posts = Man.published.filter(tags=tag)
+# def show_tag_post_list(request, tag_slug):
+#     tag = get_object_or_404(TagPost, slug=tag_slug)
+#     posts = Man.published.filter(tags=tag)
+#
+#     data = {
+#         'title': f'Тeг: {tag.tag}',
+#         'menu': menu,
+#         'posts': posts,
+#         'cat_selected': None,
+#     }
+#
+#     return render(request, 'man/index.html', data)
 
-    data = {
-        'title': f'Тeг: {tag.tag}',
-        'menu': menu,
-        'posts': posts,
-        'cat_selected': None,
-    }
 
-    return render(request, 'man/index.html', data)
+class ManTag(ListView):
+    template_name = 'man/index.html'
+    context_object_name = 'posts'
+    allow_empty = False
+
+    def get_queryset(self):
+        return Man.published.filter(tags__slug=self.kwargs['tag_slug']).select_related('cat')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        tag = context['posts'][0].tags.get(slug=self.kwargs['tag_slug'])
+        context['title'] = f'Тег - {tag.tag}'
+        context['menu'] = menu
+        context['cat_selected'] = None
+        return context
