@@ -1,6 +1,8 @@
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect, reverse, get_object_or_404, get_list_or_404
+from django.views import View
+from django.views.generic import TemplateView
 
 from .forms import AddPostForm, UploadFileForm
 from .models import Man, Category, TagPost, UploadFiles
@@ -15,17 +17,38 @@ menu = [
 
 def index(request):
     posts = Man.published.all().select_related('cat')
-    data = {'title': 'Главная страница',
-            'menu': menu,
-            'posts': posts,
-            'cat_selected': 0}
+    data = {
+        'title': 'Главная страница',
+        'menu': menu,
+        'posts': posts,
+        'cat_selected': 0
+    }
     return render(request, 'man/index.html', context=data)
 
 
-def handle_uploaded_file(f):
-    with open(f"uploads/{f.name}", "wb+") as destination:
-        for chunk in f.chunks():
-            destination.write(chunk)
+class ManHome(TemplateView):
+    template_name = 'man/index.html'
+    extra_context = {
+        'title': 'Главная страница',
+        'menu': menu,
+        'posts': Man.published.all().select_related('cat'),
+        'cat_selected': 0
+    }
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context['title'] = 'Главная страница'
+    #     context['menu'] = menu
+    #     context['posts'] = Man.published.all().select_related('cat')
+    #     context['cat_selected'] = int(self.request.GET.get('cat_id', 0))
+    #     return context
+
+# def handle_uploaded_file(f):
+
+
+#     with open(f"uploads/{f.name}", "wb+") as destination:
+#         for chunk in f.chunks():
+#             destination.write(chunk)
 
 
 def about(request: WSGIRequest):
@@ -103,6 +126,30 @@ def add_page(request: WSGIRequest):
         'form': form
     }
     return render(request, template_name='man/add_page.html', context=data)
+
+
+class AddPage(View):
+    def get(self, request: WSGIRequest):
+        form = AddPostForm()
+        data = {
+            'title': "Добавление статьи",
+            'menu': menu,
+            'form': form
+        }
+        return render(request, template_name='man/add_page.html', context=data)
+
+    def post(self, request: WSGIRequest):
+        form = AddPostForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            uri = reverse('home')
+            return redirect(uri)
+        data = {
+            'title': "Добавление статьи",
+            'menu': menu,
+            'form': form
+        }
+        return render(request, template_name='man/add_page.html', context=data)
 
 
 def contact(request):

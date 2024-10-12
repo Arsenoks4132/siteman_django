@@ -6,7 +6,7 @@ from . import converters
 register_converter(converters.MonthNumberConverter, 'month2')
 
 urlpatterns = [
-    path('', views.index, name='home'),
+    path('', views.ManHome.as_view(), name='home'),
     path('about/', views.about, name='about'),
 
     path('cats/<int:cat_id>/', views.categories, name='cats_id'),
@@ -17,7 +17,7 @@ urlpatterns = [
 
     path('post/<slug:post_slug>/', views.show_post, name='post'),
 
-    path('add_page/', views.add_page, name='add_page'),
+    path('add_page/', views.AddPage.as_view(), name='add_page'),
     path('contact/', views.contact, name='contact'),
     path('log_in/', views.log_in, name='log_in'),
     path('category/<slug:cat_slug>/', views.show_category, name='category'),
