@@ -20,6 +20,12 @@ class Man(models.Model):
         PUBLISHED = 1, 'Опубликовано'
 
     title = models.CharField(max_length=255, verbose_name='Заголовок')
+    photo = models.ImageField(
+        upload_to='photos/%Y/%m/%d',
+        default=None, blank=True,
+        null=True,
+        verbose_name='Фото',
+    )
     slug = models.SlugField(
         max_length=255,
         unique=True,
@@ -39,8 +45,14 @@ class Man(models.Model):
         verbose_name='Опубликовано'
     )
     cat = models.ForeignKey('Category', on_delete=models.PROTECT, related_name='posts', verbose_name='Категория')
-    tags = models.ManyToManyField('TagPost', blank=True, related_name='tags')
-    wife = models.OneToOneField('Wife', on_delete=models.SET_NULL, null=True, blank=True, related_name='mun')
+    tags = models.ManyToManyField('TagPost', blank=True, related_name='tags', verbose_name='Теги')
+    wife = models.OneToOneField(
+        'Wife',
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='mun',
+        verbose_name='Супруга'
+    )
 
     objects = models.Manager()
     published = PublishedManager()
@@ -95,3 +107,7 @@ class Wife(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class UploadFiles(models.Model):
+    file = models.FileField(upload_to='uploads_model')
