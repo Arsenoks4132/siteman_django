@@ -7,6 +7,7 @@ from django.views.generic import TemplateView, ListView, DetailView, FormView, C
 
 from .forms import AddPostForm, UploadFileForm
 from .models import Man, Category, TagPost, UploadFiles
+from .utils import DataMixin
 
 menu = [
     {'title': 'О сайте', 'url_name': 'about'},
@@ -27,16 +28,13 @@ menu = [
 #     return render(request, 'man/index.html', context=data)
 
 
-class ManHome(ListView):
+class ManHome(DataMixin, ListView):
     # model = Man
     template_name = 'man/index.html'
     context_object_name = 'posts'
 
-    extra_context = {
-        'title': 'Главная страница',
-        'menu': menu,
-        'cat_selected': 0
-    }
+    title_page = 'Главная страница'
+    cat_selected = 0
 
     def get_queryset(self):
         return Man.published.all().select_related('cat')
@@ -110,7 +108,7 @@ def page_not_found(request, exception):
 #     return render(request, template_name='man/post.html', context=data)
 
 
-class ShowPost(DetailView):
+class ShowPost(DataMixin, DetailView):
     model = Man
     template_name = 'man/post.html'
     slug_url_kwarg = 'post_slug'
@@ -118,11 +116,7 @@ class ShowPost(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        post = context['post']
-        context['title'] = f'Статья: {post.title}'
-        context['menu'] = menu
-        context['cat_selected'] = None
-        return context
+        return self.get_mixin_context(context, title=context['post'].title)
 
     def get_object(self, queryset=None):
         return get_object_or_404(Man.published, slug=self.kwargs[self.slug_url_kwarg])
