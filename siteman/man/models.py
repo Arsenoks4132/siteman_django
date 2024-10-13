@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.core.validators import MinLengthValidator, MaxLengthValidator
 from django.db import models
 from django.urls import reverse
@@ -38,7 +39,7 @@ class Man(models.Model):
         verbose_name='Slug',
         validators=[
             MinLengthValidator(5, message="Минимум 5 символов"),
-            MaxLengthValidator(100)
+            MaxLengthValidator(100),
         ]
     )
     content = models.TextField(blank=True, verbose_name='Контент')
@@ -47,7 +48,7 @@ class Man(models.Model):
     is_published = models.BooleanField(
         choices=tuple(map(lambda x: (bool(x[0]), x[1]), Status.choices)),
         default=Status.DRAFT,
-        verbose_name='Опубликовано'
+        verbose_name='Опубликовано',
     )
     cat = models.ForeignKey('Category', on_delete=models.PROTECT, related_name='posts', verbose_name='Категория')
     tags = models.ManyToManyField('TagPost', blank=True, related_name='posts', verbose_name='Теги')
@@ -56,7 +57,13 @@ class Man(models.Model):
         on_delete=models.SET_NULL,
         null=True, blank=True,
         related_name='mun',
-        verbose_name='Супруга'
+        verbose_name='Супруга',
+    )
+    author = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.SET_NULL,
+        related_name='posts', null=True,
+        default=None,
     )
 
     objects = models.Manager()

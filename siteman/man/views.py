@@ -1,3 +1,5 @@
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.handlers.wsgi import WSGIRequest
 from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseNotFound
@@ -12,7 +14,6 @@ from .utils import DataMixin
 
 
 class ManHome(DataMixin, ListView):
-    # model = Man
     template_name = 'man/index.html'
     context_object_name = 'posts'
 
@@ -74,10 +75,15 @@ class ShowPost(DataMixin, DetailView):
         return get_object_or_404(Man.published, slug=self.kwargs[self.slug_url_kwarg])
 
 
-class AddPage(DataMixin, CreateView):
+class AddPage(LoginRequiredMixin, DataMixin, CreateView):
     form_class = AddPostForm
-    template_name = 'man/add_page.html'
     title_page = 'Добавление статьи'
+    template_name = 'man/add_page.html'
+
+    def form_valid(self, form):
+        w = form.save(commit=False)
+        w.author = self.request.user
+        return super().form_valid(form)
 
 
 class UpdatePage(DataMixin, UpdateView):
