@@ -27,6 +27,7 @@ from siteman import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('man.urls')),
+    path('users/', include('users.urls', namespace='users'))
 ] + debug_toolbar_urls()
 
 if settings.DEBUG:
