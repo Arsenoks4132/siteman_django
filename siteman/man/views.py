@@ -1,8 +1,9 @@
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import HttpResponse, HttpResponseNotFound
 from django.shortcuts import render, redirect, reverse, get_object_or_404, get_list_or_404
+from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import TemplateView, ListView
+from django.views.generic import TemplateView, ListView, DetailView, FormView, CreateView, UpdateView
 
 from .forms import AddPostForm, UploadFileForm
 from .models import Man, Category, TagPost, UploadFiles
@@ -98,15 +99,33 @@ def page_not_found(request, exception):
     return HttpResponseNotFound(f"<h3>Мы пока ничего не нашли, пока!!!</h3>")
 
 
-def show_post(request, post_slug):
-    post = get_object_or_404(Man, slug=post_slug)
-    data = {
-        'title': post.title,
-        'menu': menu,
-        'post': post,
-        'cat_selected': None,
-    }
-    return render(request, template_name='man/post.html', context=data)
+# def show_post(request, post_slug):
+#     post = get_object_or_404(Man, slug=post_slug)
+#     data = {
+#         'title': post.title,
+#         'menu': menu,
+#         'post': post,
+#         'cat_selected': None,
+#     }
+#     return render(request, template_name='man/post.html', context=data)
+
+
+class ShowPost(DetailView):
+    model = Man
+    template_name = 'man/post.html'
+    slug_url_kwarg = 'post_slug'
+    context_object_name = 'post'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        post = context['post']
+        context['title'] = f'Статья: {post.title}'
+        context['menu'] = menu
+        context['cat_selected'] = None
+        return context
+
+    def get_object(self, queryset=None):
+        return get_object_or_404(Man.published, slug=self.kwargs[self.slug_url_kwarg])
 
 
 # def add_page(request: WSGIRequest):
@@ -133,29 +152,51 @@ def show_post(request, post_slug):
 #     }
 #     return render(request, template_name='man/add_page.html', context=data)
 
+class AddPage(CreateView):
+    form_class = AddPostForm
+    template_name = 'man/add_page.html'
+    # success_url = reverse_lazy('home')
 
-class AddPage(View):
-    def get(self, request: WSGIRequest):
-        form = AddPostForm()
-        data = {
-            'title': "Добавление статьи",
-            'menu': menu,
-            'form': form
-        }
-        return render(request, template_name='man/add_page.html', context=data)
+    extra_context = {
+        'title': "Добавление статьи",
+        'menu': menu,
+    }
 
-    def post(self, request: WSGIRequest):
-        form = AddPostForm(request.POST, request.FILES)
-        if form.is_valid():
-            form.save()
-            uri = reverse('home')
-            return redirect(uri)
-        data = {
-            'title': "Добавление статьи",
-            'menu': menu,
-            'form': form
-        }
-        return render(request, template_name='man/add_page.html', context=data)
+
+class UpdatePage(UpdateView):
+    model = Man
+    fields = ['title', 'content', 'photo', 'is_published', 'cat']
+    template_name = 'man/add_page.html'
+    success_url = reverse_lazy('home')
+
+    extra_context = {
+        'title': "Редактирование статьи",
+        'menu': menu,
+    }
+
+
+# class AddPage(View):
+#     def get(self, request: WSGIRequest):
+#         form = AddPostForm()
+#         data = {
+#             'title': "Добавление статьи",
+#             'menu': menu,
+#             'form': form
+#         }
+#         return render(request, template_name='man/add_page.html', context=data)
+#
+#     def post(self, request: WSGIRequest):
+#         form = AddPostForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             form.save()
+#             uri = reverse('home')
+#             return redirect(uri)
+#         data = {
+#             'title': "Добавление статьи",
+#             'menu': menu,
+#             'form': form
+#         }
+#         return render(request, template_name='man/add_page.html', context=data)
 
 
 def contact(request):

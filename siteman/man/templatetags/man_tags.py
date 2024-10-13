@@ -14,5 +14,5 @@ def show_categories(cat_selected=0):
 
 @register.inclusion_tag('man/list_tags.html')
 def show_all_tags():
-    tags = TagPost.objects.annotate(total=Count('posts'), ln=Length('tag')).filter(total__gt=0).order_by('ln')
+    tags = TagPost.published.annotate(total=Count('posts'), ln=Length('tag')).filter(total__gt=0).order_by('ln')
     return {'tags': tags}

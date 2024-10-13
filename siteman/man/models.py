@@ -14,7 +14,7 @@ class PublishedManager(models.Manager):
         return super().get_queryset().filter(is_published=Man.Status.PUBLISHED)
 
 
-class PublishedManagerCats(models.Manager):
+class PublishedManagerRelated(models.Manager):
     def get_queryset(self):
         return super().get_queryset().filter(posts__is_published=Man.Status.PUBLISHED)
 
@@ -83,7 +83,7 @@ class Category(models.Model):
     slug = models.SlugField(max_length=255, unique=True, db_index=True)
 
     objects = models.Manager()
-    published = PublishedManagerCats()
+    published = PublishedManagerRelated()
 
     class Meta:
         verbose_name = 'Категория'
@@ -100,6 +100,9 @@ class Category(models.Model):
 class TagPost(models.Model):
     tag = models.CharField(max_length=100, db_index=True)
     slug = models.SlugField(max_length=255, unique=True, db_index=True)
+
+    objects = models.Manager()
+    published = PublishedManagerRelated()
 
     def __str__(self):
         return self.tag
