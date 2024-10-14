@@ -1,10 +1,3 @@
-menu = [
-    {'title': 'О сайте', 'url_name': 'about'},
-    {'title': 'Добавить страницу', 'url_name': 'add_page'},
-    {'title': 'Обратная связь', 'url_name': 'contact'},
-]
-
-
 class DataMixin:
     title_page = None
     cat_selected = None
