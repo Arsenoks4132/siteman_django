@@ -17,6 +17,7 @@ gunicorn==23.0.0
 idna==3.10
 ipython==8.26.0
 jedi==0.19.1
+MarkupSafe==3.0.1
 matplotlib-inline==0.1.7
 oauthlib==3.2.2
 packaging==24.1
@@ -40,5 +41,6 @@ traitlets==5.14.3
 tzdata==2024.1
 urllib3==2.2.3
 wcwidth==0.2.13
+Werkzeug==3.0.4
 zope.event==5.0
 zope.interface==7.1.0
