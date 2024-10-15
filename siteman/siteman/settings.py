@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'debug_toolbar',
     'social_django',
+    'captcha',
 ]
 
 MIDDLEWARE = [
@@ -182,3 +183,7 @@ SOCIAL_AUTH_PIPELINE = (
     'social_core.pipeline.social_auth.load_extra_data',
     'social_core.pipeline.user.user_details',
 )
+
+CAPTCHA_FONT_SIZE = 60
+CAPTCHA_IMAGE_SIZE = (280, 100)
+CAPTCHA_LETTER_ROTATION = (-80, 80)

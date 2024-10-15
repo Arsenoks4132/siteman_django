@@ -1,3 +1,4 @@
+from captcha.fields import CaptchaField
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.validators import MinLengthValidator, MaxLengthValidator
@@ -59,6 +60,5 @@ class ContactForm(forms.Form):
         attrs={
             'cols': 60,
             'rows': 10,
-        }
-    )
-    )
+        }))
+    captcha = CaptchaField()
