@@ -1,5 +1,5 @@
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.handlers.wsgi import WSGIRequest
 from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseNotFound
@@ -75,10 +75,11 @@ class ShowPost(DataMixin, DetailView):
         return get_object_or_404(Man.published, slug=self.kwargs[self.slug_url_kwarg])
 
 
-class AddPage(LoginRequiredMixin, DataMixin, CreateView):
+class AddPage(PermissionRequiredMixin, LoginRequiredMixin, DataMixin, CreateView):
     form_class = AddPostForm
     title_page = 'Добавление статьи'
     template_name = 'man/add_page.html'
+    permission_required = 'man.add_man'
 
     def form_valid(self, form):
         w = form.save(commit=False)
@@ -86,18 +87,24 @@ class AddPage(LoginRequiredMixin, DataMixin, CreateView):
         return super().form_valid(form)
 
 
-class UpdatePage(DataMixin, UpdateView):
+class UpdatePage(PermissionRequiredMixin, DataMixin, UpdateView):
     model = Man
     fields = ['title', 'content', 'photo', 'is_published', 'cat']
     template_name = 'man/add_page.html'
     success_url = reverse_lazy('home')
     title_page = 'Редактирование статьи'
+    permission_required = 'man.change_man'
+    extra_context = {
+        'button_text': 'Сохранить'
+    }
 
 
+@permission_required(perm='man.view_man', raise_exception=True)
 def contact(request):
     return HttpResponse('Вот здесь с нами можно связаться - 8 (800)-555-35-35')
 
 
+@login_required
 def log_in(request):
     return HttpResponse('БД пока нету, терпите')
 
