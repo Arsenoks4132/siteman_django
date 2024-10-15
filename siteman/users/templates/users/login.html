@@ -5,4 +5,9 @@
 <h1>Авторизация</h1>
 
 {% post_form form "Войти" %}
+
+<p>
+    <a href="{% url 'users:password_reset' %}">Забыли пароль?</a>
+</p>
+
 {% endblock %}
