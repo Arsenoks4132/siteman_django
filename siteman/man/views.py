@@ -12,6 +12,8 @@ from .forms import AddPostForm, UploadFileForm, ContactForm
 from .models import Man, Category, TagPost, UploadFiles
 from .utils import DataMixin
 
+from django.core.cache import cache
+
 
 class ManHome(DataMixin, ListView):
     template_name = 'man/index.html'
@@ -21,7 +23,11 @@ class ManHome(DataMixin, ListView):
     cat_selected = 0
 
     def get_queryset(self):
-        return Man.published.all().select_related('cat')
+        m_lst = cache.get('man_posts')
+        if not m_lst:
+            m_lst = Man.published.all().select_related('cat')
+            cache.set('man_posts', m_lst, 60)
+        return m_lst
 
 
 def about(request: WSGIRequest):

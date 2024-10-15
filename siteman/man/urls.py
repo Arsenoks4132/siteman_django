@@ -1,4 +1,5 @@
 from django.urls import path, re_path, register_converter
+from django.views.decorators.cache import cache_page
 
 from . import views
 from . import converters
