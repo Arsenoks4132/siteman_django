@@ -24,4 +24,5 @@ urlpatterns = [
     path('category/<slug:cat_slug>/', views.ManCategory.as_view(), name='category'),
     path('tag/<slug:tag_slug>/', views.ManTag.as_view(), name='tag'),
     path('edit/<slug:slug>/', views.UpdatePage.as_view(), name='edit_page'),
+
 ]

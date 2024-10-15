@@ -24,12 +24,26 @@ from debug_toolbar.toolbar import debug_toolbar_urls
 
 from siteman import settings
 
+from django.contrib.sitemaps.views import sitemap
+
+from django.views.decorators.cache import cache_page
+from man.sitemaps import PostSiteMap, CategorySiteMap, TagSiteMap
+
+sitemaps = {
+    'posts': PostSiteMap,
+    'categories': CategorySiteMap,
+    'tags': TagSiteMap,
+}
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('man.urls')),
     path('users/', include('users.urls', namespace='users')),
     path('social-auth/', include('social_django.urls', namespace='social')),
     path('captcha/', include('captcha.urls')),
+
+    path('sitemap.xml', cache_page(86400)(sitemap), {'sitemaps': sitemaps},
+         name='django.contrib.sitemaps.views.sitemap')
 ]
 
 if settings.DEBUG:
