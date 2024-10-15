@@ -63,13 +63,14 @@ class ProfileUserForm(forms.ModelForm):
         widget=forms.TextInput(attrs={'class': 'form-input'})
     )
     email = forms.CharField(
+        required=False,
         disabled=True,
         label='E-mail',
         widget=forms.TextInput(attrs={'class': 'form-input'})
     )
     this_year = datetime.date.today().year
     date_birth = forms.DateField(
-        widget=forms.SelectDateWidget(years=tuple(range(this_year-120, this_year + 1)))
+        widget=forms.SelectDateWidget(years=tuple(range(this_year - 120, this_year + 1)))
     )
 
     class Meta:
