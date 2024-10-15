@@ -8,7 +8,7 @@ from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import TemplateView, ListView, DetailView, FormView, CreateView, UpdateView
 
-from .forms import AddPostForm, UploadFileForm
+from .forms import AddPostForm, UploadFileForm, ContactForm
 from .models import Man, Category, TagPost, UploadFiles
 from .utils import DataMixin
 
@@ -100,13 +100,19 @@ class UpdatePage(PermissionRequiredMixin, DataMixin, UpdateView):
 
 
 @permission_required(perm='man.view_man', raise_exception=True)
-def contact(request):
+def log_in(request):
     return HttpResponse('Вот здесь с нами можно связаться - 8 (800)-555-35-35')
 
 
-@login_required
-def log_in(request):
-    return HttpResponse('БД пока нету, терпите')
+class ContactFormView(LoginRequiredMixin, DataMixin, FormView):
+    form_class = ContactForm
+    template_name = 'man/contact.html'
+    success_url = reverse_lazy('home')
+    title_page = 'Обратная связь'
+
+    def form_valid(self, form):
+        print(form.cleaned_data)
+        return super().form_valid(form)
 
 
 class ManCategory(DataMixin, ListView):
