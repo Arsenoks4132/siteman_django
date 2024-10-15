@@ -111,6 +111,11 @@ class TagPost(models.Model):
     objects = models.Manager()
     published = PublishedManagerRelated()
 
+    class Meta:
+        verbose_name = 'Тег'
+        verbose_name_plural = 'Теги'
+        ordering = ('pk',)
+
     def __str__(self):
         return self.tag
 

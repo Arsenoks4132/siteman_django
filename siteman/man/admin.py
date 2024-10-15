@@ -1,7 +1,7 @@
 from django.contrib import admin, messages
 from django.utils.safestring import mark_safe
 
-from .models import Man, Category
+from .models import Man, Category, TagPost
 
 
 class MarriedFilter(admin.SimpleListFilter):
@@ -24,9 +24,9 @@ class MarriedFilter(admin.SimpleListFilter):
 class ManAdmin(admin.ModelAdmin):
     fields = ('title', 'slug', 'cat', 'content', 'photo', 'post_photo', 'wife', 'tags')  # Поля для редактирования
     # exclude = ('tags', 'is_published')  # Исключаемые из редактирования поля
-    readonly_fields = ('post_photo', )
-    prepopulated_fields = {'slug': ('title', )}
-    filter_horizontal = ('tags', )
+    readonly_fields = ('post_photo',)
+    prepopulated_fields = {'slug': ('title',)}
+    filter_horizontal = ('tags',)
     list_display = ('id', 'title', 'post_photo', 'time_create', 'is_published', 'cat')
     list_display_links = ('title',)
     ordering = ('time_create',)
@@ -58,3 +58,10 @@ class ManAdmin(admin.ModelAdmin):
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('id', 'name')
     list_display_links = ('id', 'name')
+
+
+@admin.register(TagPost)
+class TagAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'tag', 'slug')
+    list_display_links = ('tag', )
+    prepopulated_fields = {'slug': ('tag',)}
