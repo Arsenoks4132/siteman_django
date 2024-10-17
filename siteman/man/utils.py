@@ -2,7 +2,7 @@ class DataMixin:
     title_page = None
     cat_selected = None
     extra_context = {}
-    paginate_by = 3
+    paginate_by = 5
 
     def __init__(self):
         self.extra_context['title'] = self.title_page
