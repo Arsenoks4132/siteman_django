@@ -1,8 +1,10 @@
-from django.urls import path, re_path, register_converter
+from django.urls import path, re_path, register_converter, include
 from django.views.decorators.cache import cache_page
 
 from . import views
 from . import converters
+
+from .rest import urls
 
 register_converter(converters.MonthNumberConverter, 'month2')
 
@@ -24,5 +26,4 @@ urlpatterns = [
     path('category/<slug:cat_slug>/', views.ManCategory.as_view(), name='category'),
     path('tag/<slug:tag_slug>/', views.ManTag.as_view(), name='tag'),
     path('edit/<slug:slug>/', views.UpdatePage.as_view(), name='edit_page'),
-
-]
+] + urls.urlpatterns

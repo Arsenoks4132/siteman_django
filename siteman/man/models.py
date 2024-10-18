@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinLengthValidator, MaxLengthValidator
 from django.db import models
 from django.urls import reverse
+from django.utils.text import slugify
 
 
 class PublishedManager(models.Manager):
@@ -22,7 +23,8 @@ class Man(models.Model):
     title = models.CharField(max_length=255, verbose_name='Заголовок')
     photo = models.ImageField(
         upload_to='photos/%Y/%m/%d',
-        default=None, blank=True,
+        default=None,
+        blank=True,
         null=True,
         verbose_name='Фото',
     )
@@ -74,9 +76,9 @@ class Man(models.Model):
     def get_absolute_url(self):
         return reverse('post', kwargs={'post_slug': self.slug})
 
-    # def save(self, *args, **kwargs):
-    #     self.slug = slugify(self.title)
-    #     super().save(*args, **kwargs)
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.title)
+        super().save(*args, **kwargs)
 
 
 class Category(models.Model):

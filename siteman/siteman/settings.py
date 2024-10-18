@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'captcha',
     'django.contrib.sites',
     'django.contrib.sitemaps',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -206,3 +207,10 @@ CAPTCHA_IMAGE_SIZE = (280, 100)
 CAPTCHA_LETTER_ROTATION = (-80, 80)
 
 SITE_ID = 1
+
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
+    ]
+}
