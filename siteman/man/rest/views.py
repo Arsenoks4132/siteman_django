@@ -93,7 +93,7 @@ class ManAPIUpdate(generics.RetrieveUpdateAPIView):
     queryset = Man.objects.all()
     serializer_class = ManSerializer
     permission_classes = (IsAuthenticated,)
-    authentication_classes = (TokenAuthentication, )
+    # authentication_classes = (TokenAuthentication, )
 
 
 class ManAPIDestroy(generics.RetrieveDestroyAPIView):
