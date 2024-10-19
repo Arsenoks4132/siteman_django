@@ -1,7 +1,8 @@
 from django.forms import model_to_dict
 from rest_framework import generics, viewsets
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -91,6 +92,8 @@ class ManAPIList(generics.ListCreateAPIView):
 class ManAPIUpdate(generics.RetrieveUpdateAPIView):
     queryset = Man.objects.all()
     serializer_class = ManSerializer
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (TokenAuthentication, )
 
 
 class ManAPIDestroy(generics.RetrieveDestroyAPIView):
