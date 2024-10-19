@@ -1,12 +1,30 @@
 from django.forms import model_to_dict
-from django.utils.text import slugify
-
-from rest_framework import generics
+from rest_framework import generics, viewsets
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from man.models import Man
+from man.models import Man, Category
+from .permissions import IsAdminOrReadOnly
 from .serializers import ManSerializer
+
+
+# class ManViewSet(viewsets.ModelViewSet):
+#     queryset = Man.objects.all()
+#     serializer_class = ManSerializer
+#
+#     def get_queryset(self):
+#         pk = self.kwargs.get('pk')
+#         if not pk:
+#             return Man.objects.all()[:3]
+#
+#         return Man.objects.filter(pk=pk)
+#
+#     @action(methods=['get'], detail=False)
+#     def category(self, request):
+#         cats = Category.objects.all()
+#         return Response({'cats': [model_to_dict(c) for c in cats]})
 
 
 # class ManAPIView(generics.ListAPIView):
@@ -65,14 +83,17 @@ from .serializers import ManSerializer
 
 
 class ManAPIList(generics.ListCreateAPIView):
-    queryset = Man.published.all()
+    queryset = Man.objects.all()
     serializer_class = ManSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
 
-class ManAPIUpdate(generics.UpdateAPIView):
+class ManAPIUpdate(generics.RetrieveUpdateAPIView):
     queryset = Man.objects.all()
     serializer_class = ManSerializer
 
-class ManAPIDetailView(generics.RetrieveUpdateDestroyAPIView):
+
+class ManAPIDestroy(generics.RetrieveDestroyAPIView):
     queryset = Man.objects.all()
     serializer_class = ManSerializer
+    permission_classes = (IsAdminOrReadOnly,)
