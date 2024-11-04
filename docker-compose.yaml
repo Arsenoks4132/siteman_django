@@ -1,0 +1,42 @@
+volumes:
+  pgdata:
+
+services:
+  django:
+    restart: always
+    container_name: django
+    image: django_postgresql:1
+    build:
+      context: .
+      dockerfile: docker/django/Dockerfile
+    volumes:
+      - ./siteman:/usr/src/app/siteman
+
+    working_dir: /usr/src/app/siteman
+
+    depends_on:
+      - pgdb
+    command: gunicorn -c gunicorn.py siteman.wsgi
+
+  nginx:
+    restart: always
+    container_name: nginx
+    image: nginx:stable
+    ports:
+      - 80:8080
+    volumes:
+      - ./siteman/static:/srv/www/siteman/static
+      - ./docker/nginx:/etc/nginx/conf.d
+    depends_on:
+      - django
+
+  pgdb:
+    restart: always
+    container_name: pgdb
+    image: postgres:17
+    volumes:
+      - pgdata:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres

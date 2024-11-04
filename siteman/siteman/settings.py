@@ -13,7 +13,7 @@ SECRET_KEY = 'django-insecure-@pb*3k63%^%fdz!h+*bf!!=)yb@^u5vx4yj9%sb6@kr=^q^_+g
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'siteman.ru']
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'siteman.ru', '0.0.0.0']
 INTERNAL_IPS = ["127.0.0.1"]
 
 # Application definition
@@ -44,7 +44,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     # "django.middleware.cache.UpdateCacheMiddleware",
     "django.middleware.common.CommonMiddleware",
-    #     "django.middleware.cache.FetchFromCacheMiddleware",
+    # "django.middleware.cache.FetchFromCacheMiddleware",
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -85,10 +85,10 @@ WSGI_APPLICATION = 'siteman.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'siteman_db',
-        'USER': 'siteman',
-        'PASSWORD': '1234',
-        'HOST': 'localhost',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres',
+        'HOST': 'pgdb',
         'PORT': 5432,
     }
 }
@@ -135,7 +135,6 @@ USE_TZ = True
 
 STATIC_ROOT = 'static/'
 STATIC_URL = 'static/'
-
 
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
