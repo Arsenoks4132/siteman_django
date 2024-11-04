@@ -1,21 +1,9 @@
 from captcha.fields import CaptchaField
 from django import forms
 from django.core.exceptions import ValidationError
-from django.core.validators import MinLengthValidator, MaxLengthValidator
 
 from .models import Category, Wife, Man
 
-
-# class RussianValidator:
-#     ALLOWED_CHARS = 'абвгдеёжзийклмнопрстуфхцчшщъыьэюяАБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ0123456789- '
-#     code = 'Russian'
-#
-#     def __init__(self, message=None):
-#         self.message = message if message else 'Должны присутствовать только русские символы, цифры, дефис и пробел.'
-#
-#     def __call__(self, value, *args, **kwargs):
-#         if not (set(value) <= set(self.ALLOWED_CHARS)):
-#             raise ValidationError(self.message, code=self.code)
 
 class AddPostForm(forms.ModelForm):
     cat = forms.ModelChoiceField(

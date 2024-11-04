@@ -16,7 +16,6 @@ class GetPagesTestCase(TestCase):
         path = reverse('home')
         response = self.client.get(path)
         self.assertEqual(response.status_code, HTTPStatus.OK)
-        # self.assertIn('women/index.html', response.template_name)
         self.assertTemplateUsed(response, 'man/index.html')
         self.assertEqual(response.context_data['title'], "Главная страница")
 

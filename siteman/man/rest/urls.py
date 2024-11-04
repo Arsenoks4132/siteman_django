@@ -2,13 +2,9 @@ from django.urls import path, re_path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView, TokenVerifyView
 
 from . import views
-from rest_framework import routers
 
-# router = routers.DefaultRouter()
-# router.register(r'man', views.ManViewSet)
 
 urlpatterns = [
-    # path('api/v1/', include(router.urls))
     path('api/v1/drf-auth/', include('rest_framework.urls')),
     path('api/v1/men/', views.ManAPIList.as_view()),
     path('api/v1/men/<int:pk>/', views.ManAPIUpdate.as_view()),

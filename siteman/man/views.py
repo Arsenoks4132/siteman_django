@@ -1,15 +1,14 @@
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.auth.decorators import permission_required
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.core.handlers.wsgi import WSGIRequest
 from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseNotFound
-from django.shortcuts import render, redirect, reverse, get_object_or_404, get_list_or_404
+from django.shortcuts import render, redirect, reverse, get_object_or_404
 from django.urls import reverse_lazy
-from django.views import View
-from django.views.generic import TemplateView, ListView, DetailView, FormView, CreateView, UpdateView
+from django.views.generic import ListView, DetailView, FormView, CreateView, UpdateView
 
-from .forms import AddPostForm, UploadFileForm, ContactForm
-from .models import Man, Category, TagPost, UploadFiles
+from .forms import AddPostForm, ContactForm
+from .models import Man
 from .utils import DataMixin
 
 from django.core.cache import cache
