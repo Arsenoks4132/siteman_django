@@ -1,8 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.core.validators import MinLengthValidator, MaxLengthValidator
 from django.db import models
+from pytils.translit import slugify
 from django.urls import reverse
-from django.utils.text import slugify
 
 
 class PublishedManager(models.Manager):
