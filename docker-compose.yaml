@@ -26,6 +26,7 @@ services:
       - 80:8080
     volumes:
       - ./siteman/static:/srv/www/siteman/static
+      - ./siteman/media:/srv/www/siteman/media
       - ./docker/nginx:/etc/nginx/conf.d
     depends_on:
       - django
