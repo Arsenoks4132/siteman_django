@@ -35,3 +35,9 @@ py siteman/manage.py makemigrations && py siteman/manage.py loaddata siteman/db.
 ```shell
 py siteman/manage.py runserver 80
 ```
+
+# 6. Запуск микросервисной архитектуры
+
+```shell
+docker-compose up --build
+```
