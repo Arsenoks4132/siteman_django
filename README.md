@@ -24,13 +24,13 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-# 4. Применение миграциф и загрузка фикстур
+# 4. Применение миграций и загрузка фикстур
 
 ```shell
 py siteman/manage.py makemigrations && py siteman/manage.py loaddata siteman/db.json
 ```
 
-# 4. Запуск программы
+# 5. Запуск тестового вебсервера
 
 ```shell
 py siteman/manage.py runserver 80
